@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package main;
+
+message messagePackage {
+  // Actual message contents.
+  string messageContent= 1;
+  // Where the message originated from.
+  string client = 2;
+  string sequenceNumber = 3;
+}
+
+message sendMessageStatus {
+  // Send a message (used by both server and client)
+  string status = 1;
+} 
+
+
+message loginStatus {
+  // Successful / unsucessful
+  string response = 1;
+  // Optional? Return client list when a client logins in.
+  string clientList = 2;
+} 
+
+message loginRequest {
+  // Registration name (inputted by the user).
+  string name = 1;
+  // Address of the user.
+  string address = 2;
+} 
+
+message logoutRequest {
+  string name = 1;
+  string address = 2;
+}
+
+message logoutStatus {
+  string status = 1;
+}
+
+message addServerRequest {
+  string id = 1;
+  string address = 2;
+}
+
+message addServerResponse {
+  string status = 1;
+}
+
+message getUsersResponse {
+  repeated loginRequest users = 1;
+}
+
+message getMessagesResponse {
+  repeated messagePackage messages = 1;
+}
+
+message Server {
+    string id = 1;
+    string address = 2;
+}
+message getKnownServersResponse {
+    repeated Server servers = 1;
+}
+
+message Empty {
+
+}
+
+service ChatService {
+  // Login request to display user in connections list, returns whether the user was connected or not or returning list of connected users.
+  rpc login(loginRequest) returns (loginStatus);
+
+  rpc logout(logoutRequest) returns (logoutStatus);
+
+  // If a client send a message, return the status of said message (successful/unsucessful).
+  rpc sendMessage(messagePackage) returns (sendMessageStatus);
+
+  rpc addServer(addServerRequest) returns (addServerResponse);
+
+  rpc getUsers(Empty) returns (getUsersResponse);
+
+  rpc getMessages(Empty) returns (getMessagesResponse);
+
+  rpc getKnownServers(Empty) returns (getKnownServersResponse);
+
+} 
